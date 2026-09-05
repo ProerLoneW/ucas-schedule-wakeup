@@ -33,6 +33,7 @@ import argparse
 import csv
 import importlib.util
 import json
+import os
 import ssl
 import subprocess
 import sys
@@ -83,9 +84,13 @@ def cmd_doctor(args=None):
 
 # ================================================================ 登录态管理
 def load_cookie_header(cli_cookie: str = "") -> str:
-    """优先级：命令行传入 > cookie.txt（F12 复制） > cookies.json（浏览器登录导出）。"""
+    """优先级：命令行传入 > 环境变量 UCAS_COOKIE > cookie.txt（F12 复制）
+    > cookies.json（浏览器登录导出）。"""
     if cli_cookie:
         return cli_cookie.strip()
+    env = os.environ.get("UCAS_COOKIE", "").strip()
+    if env:
+        return env
     if COOKIE_TXT.exists() and COOKIE_TXT.read_text(encoding="utf-8").strip():
         return COOKIE_TXT.read_text(encoding="utf-8").strip()
     if COOKIES_JSON.exists():

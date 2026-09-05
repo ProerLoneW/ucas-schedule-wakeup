@@ -1,0 +1,3 @@
+openpyxl>=3.0
+# 仅浏览器登录（login_browser.py）需要；只用 Cookie 方式可不装
+playwright>=1.30
