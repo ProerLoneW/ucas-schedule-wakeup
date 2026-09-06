@@ -1,10 +1,10 @@
 # UCAS Schedule WakeUp Exporter —— 将课表导出为 wakeup 课程表可识别的表格格式
 
-国科大（中国科学院大学）课表导出工具：通过 [kb.mooc.ucas.edu.cn](https://kb.mooc.ucas.edu.cn/res/pc/curriculum/schedule.html)（超星课表国科大部署）的身份认证，爬取**所有学年学期**的课程，按学期分别导出 [WakeUp 课程表](https://wakeup.fun) App 可直接导入的 Excel/CSV 文件。
+本项目用于国科大（中国科学院大学）课表导出工具：通过 [kb.mooc.ucas.edu.cn](https://kb.mooc.ucas.edu.cn/res/pc/curriculum/schedule.html)（超星课表国科大部署）的身份认证，爬取**所有学年学期**的课程，按学期分别导出 [WakeUp 课程表](https://wakeup.fun) App 可直接导入的 Excel/CSV 文件。
 
 本项目针对的目标网站为[国科大的学习通课表网页](https://kb.mooc.ucas.edu.cn/res/pc/curriculum/schedule.html)，但项目中的抓取逻辑，适用于任何在学习通上可看到课表的学校，参考学校的具体情况修改 URL 即可。
 
-提供两种使用方式：**作为 Agent Skill 使用**（对话式引导，推荐）或**直接运行 Python 脚本**。
+提供两种使用方式：**作为 Agent Skill 使用**（对话式引导，推荐，使用极其丝滑，实测workbuddy+hy3全程运行不超过10分钟）或**直接运行 Python 脚本**。
 
 
 
@@ -13,8 +13,6 @@
 本教程涉及到代码部分的东西，crawler逻辑实现、skill封装，均由ai完成，但效果经过多次验证，写本教程的目的是帮助同学节省时间，分享我在解决课表过程中遇到的疑点和坑，行不通之处可与我多多讨论！
 
 当然，我能用ai完成，每个人也都能用ai完成，也可以自己尝试与ai一步步对话，最终解决课表表格文件的数据获取和导出问题（实测使用workbuddy+hy3的组合也能解决这个问题）。
-
-
 
 
 
