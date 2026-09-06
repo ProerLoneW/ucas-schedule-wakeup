@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no" />
+    <!-- 禁止打电话，发邮件 -->
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <!--禁止缓存-->
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <!--设定网页的到期时间-->
+    <meta http-equiv="expires" content="0" />
+    <title data-lang="课表">课表</title>
+    <link rel="stylesheet" href="css/layui.css" /> <!--20200909 -->
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/style.css?v=2" />
+    <link rel="stylesheet" href="css/schedule.css?v=2" />
+    <!--20200827 引入裁剪插件和图标css-->
+    <link rel="stylesheet" href="css/cropper.css" />
+    <link rel="stylesheet" href="css/icon.css" />
+    <!--20220114 引入教案预览弹框css-->
+    <link rel="stylesheet" href="css/style1.css" />
+    <!--<link rel="stylesheet" href="css/reset.css" />-->
+    <style>
+        .onliving,
+        .recordLiving {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="subNav">
+        <!-- <a class="subBack fl"><i class="BackIcon"></i>返回</a> -->
+        <p class="subCenterTitle"></p>
+    </div>
+    <div class="schedule">
+        <!-- 西电课表增加备注 -->
+        <div class="courseTips">
+            <img src="./images/importError.png" alt="提示图标">
+            <span>注：当日22:00前退选课的，课表于次日早8:00完成同步；超过22:00退选课的，第三日早8:00完成同步</span>
+        </div>
+        <div class="selectBox">
+            <!-- 选择学期 -->
+            <span class="curYearBox">
+                <span>学年学期</span>
+                <div class="select" style="width: 200px;">
+                    <p><span class="curYear"></span><i class="arrow"></i></p>
+                    <div class="settingSelectYear">
+                        <ul class="halfyearList"></ul>
+                    </div>
+                </div>
+            </span>
+            <div class="selectWeek">
+                <div class="prevWeek"></div>
+                <span class="week" week='1'></span>
+                <div class="nextWeek"></div>
+            </div>
+            <div class="selectMask">
+                <ul class="selectList"></ul>
+            </div>
+            <div class="headRight">
+                <div class="deleteAll" style="display: none;"><i class="icon"></i><span>一键清空</span></div>
+                <div class="changeSchool"><i class="icon"></i><span data-lang="切换校区">切换校区</span></div>
+                <div class="importExcel" style="display: none;"><i class="icon"></i><span data-lang="导入">导入</span></div>
+                <div class="setting" style="display: none;"><i class="icon"></i><span data-lang="设置">设置</span></div>
+                <div class="QRCode"><i class="icon"></i><span data-lang="二维码">二维码</span></div>
+                <div class="forward"><i class="icon"></i><span data-lang="转发">转发</span></div>
+                <!--<div class="more" style="display: none;">
+						<i class="moreIcon"></i><span>更多</span>
+						<div class="operate_con">
+							<div class="history">历史课表</div>
+						</div>
+					</div>-->
+            </div>
+        </div>
+        <table id="scheduleHead"></table>
+        <div class="table">
+            <table id="scheduleTable"></table>
+        </div>
+    </div>
+    <div class="onlineCoursesTips" style="display:none;">
+        <p>课表数据来源于学校数据中心，课表数据以教务系统为准，如与实际不符合或有任何疑问，请联系qq服务群：311687757，或与教务处联系，联系电话：02585811579。</p>
+    </div>
+    <!-------- 南中医“尔雅”和“智慧树”课程 start----------->
+    <div class="onlineCourses" style="display:none;">
+        <div class="topName">
+            <span>网络课程</span>
+            <span class="tips">（如有问题 请联系 85811579 ）</span>
+        </div>
+        <div class="onlineContainer">
+            <!--<div class="courseBox">
+					<div class="boxLeft">
+						<div class="courseType">尔雅</div>
+						<img  class="courseImg" src="./images/courseImg.png" alt="">
+					</div>
+					<div class="boxRight">
+						<div class="courseTitle">绿色康复</div>
+						<div class="teacherName">教师姓名：刘忠良，康治臣</div>
+						<div class="courseName">班级名称：默认班级</div>
+						<div class="courseId">课程编号：lskf001</div>
+					</div>
+				</div>-->
+        </div>
+    </div>
+    <!--------南中医“尔雅”和“智慧树”课程 end----------->
+    <!-------- 课程详情 start----------->
+    <!--<div class="maskDiv popCourseDetailShowHide" style="display: none;">
+			<div class="popDiv wid440">
+				<div class="popHead">
+					<a href="javascript:void(0)" class="popClose fr"><img src="images/popClose.png" /></a>
+					<p class="fl fs18 colorDeep ">周一第1-2节</p>
+				</div>
+				<div class="het60"></div>
+				<div class="detailModalMain">
+					<div class="list">
+						<div class="listItem courseName clearfix">
+							<span class="itemLeft">课程</span>
+							<div class="itemRight">
+                                <label>高等数学</label>
+                                <div class="rightpoplist">
+                                    <ul>
+                                        <li class="createCourseBtn">新建课程</li>
+                                        <li class="copyCourseBtn">克隆已有课程</li>
+                                        <li class="correlatedCourseBtn">关联已有课程</li>
+                                    </ul>
+                                </div>
+                            </div>
+						</div>
+						<div class="listItem teachplan clearfix" style="display:none;">
+							<span class="itemLeft">教案</span>
+							<div class="itemRight">
+                                <label class="addteachPlan">点击添加</label>
+                                <div class="rightpoplist">
+                                    <ul>
+                                        <li class="createTeachPlan">新建教案</li>
+                                        <li class="correlatedTeachPlan">关联教案</li>
+                                    </ul>
+                                </div>
+                            </div>
+						</div>
+						<div class="listItem teacherName gray clearfix" style="display:none;">
+							<span class="itemLeft">教师</span>
+							<div class="itemRight"></div>
+						</div>
+						<div class="listItem class clearfix">
+							<span class="itemLeft">班级</span>
+							<div class="itemRight">
+                                <span class="gray"></span>
+                                <span class="activity">班级活动</span>
+                            </div>
+						</div>
+						<div class="listItem personNum clearfix" style="display:none;">
+							<span class="itemLeft">人数</span>
+							<div class="itemRight"></div>
+						</div>
+						<div class="listItem weeks gray clearfix">
+							<span class="itemLeft">上课周次</span>
+							<div class="itemRight"></div>
+						</div>
+						<div class="listItem classLoc clearfix">
+                            <span class="itemLeft">上课地点</span>
+                            &lt;!&ndash;20200902 &ndash;&gt;
+                            <div class="itemRight">
+                                <label class="gray"></label>
+                                <label class="online"></label>
+                            </div>
+                        </div>
+						<div class="listItem work clearfix" style="display:none;">
+							<span class="itemLeft">作业</span>
+							<div class="itemRight">第1节课后作业</div>
+						</div>
+					</div>
+					&lt;!&ndash;20200817 加删除按钮&ndash;&gt;
+                    <div class="clearfix" style="display:none;" id="edit">
+                        <div class="deleteCourse fl">
+                            <i class="delIcon"></i><span class="delText">删除</span>
+                        </div>
+                        <div class="edit fl">
+                            <i class="editIcon"></i><span class="editText">编辑</span>
+                        </div>
+                    </div>
+				</div>
+				<div class="popBottom teacher" style="display:none;">
+                    <a href="javascript:void(0)" class="btnBlue fr fs14 log">教学日志</a>
+					<a href="javascript:void(0)" class="btnBlue fr fs14 sign">发签到</a>
+                    <a href="javascript:void(0)" class="btnBlue fr fs14 notice">发通知</a>
+				</div>
+				<div class="popBottom student" style="display:none;">
+                    <a href="javascript:void(0)" class="btnBlue fr fs14 note">课堂笔记</a>
+                </div>
+				<div class="het70 "></div>
+			</div>
+		</div>-->
+    <!--------课程详情 end----------->
+    <!--------提示弹窗 start----------->
+    <div class="maskDiv popTipsShowHide" style="display:none;">
+        <div class="popDiv wid440 popMove">
+            <div class="popHead">
+                <a href="javascript:void(0)" class="popClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep">提示</p>
+            </div>
+            <div class="het60"></div>
+            <p class="popWord fs16 colorIn">新建课程？</p>
+            <div class="popBottom">
+                <a href="javascript:void(0)" class="jb_btn jb_btn_92 fr fs14 create">新建</a>
+                <a href="javascript:void(0)" class="btnBlue btn_92_cancel fr fs14 popbtn_cancle">取消</a>
+            </div>
+            <div class="het70"></div>
+        </div>
+    </div>
+    <!--------提示 end----------->
+    <!-- ------------------------- 20240221 导入弹窗 start------------------------------------- -->
+    <div class="maskDiv popImportExcelShowHide timeSet" style="display: none;">
+        <div class="popDiv wid840 importExcelModal" style="top: calc(50% - 300px); left: calc(50% - 410px);">
+            <div class="popHead">
+                <a href="javascript:void(0)" class="popImportExcelClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep " data-lang="本地上传">本地上传</p>
+            </div>
+            <div class="het60"></div>
+            <div class="importExcelMain">
+                <div class="importExcelContent">
+                    <div class="importExcelType">
+                        <span class="typeTitle">导入模式</span>
+                        <ul>
+                            <li class="active" data-type="1"> <span>新增课程</span></li>
+                            <li data-type="2"><span>清空课表后导入</span></li>
+                        </ul>
+                    </div>
+                    <div class="importExcelNote">
+                        <span class="title">注意事项：</span>
+                        <p>1.为保证课表导入顺利，请 <span class="template">下载excel模版</span> ，并仔细阅读其中的导入示例和说明。</p>
+                        <p>2.新增课程模式为：不修改课表中已有的课程，仅新增课表中没有的课程。</p>
+                        <p>3.修改和新增课程：仅修改冲突的课程，若导入文件中与课表中已有课程没有冲突，则不会修改课表中已有课程，仅新增。</p>
+                        <p>4.覆盖课程：删除课表中已有课程，已导入文件中的课程为准。</p>
+                    </div>
+                    <div class="importExcelUpload">
+                        <button class="upload">
+                            上传文件
+                            <input type="file" id="newfile" accept=".xlsx">
+                        </button>
+                    </div>
+                </div>
+                <div class="importExcelResult" style="display: none;">
+                    <div class="successResult" style="display: none;">
+                        <div class="success">
+                            <img src="./images/importSuccess.png" alt="" srcset="">
+                            <p>导入完成</p>
+                        </div>
+                        <div class="msg">成功导入 <span class="successNum">12</span> 条数据</div>
+                    </div>
+                    <div class="errorResult">
+                        <div class="error">
+                            <img src="./images/importError.png" alt="" srcset="">
+                            <p>导入完成</p>
+                        </div>
+                        <div class="msg">成功导入 <span class="successNum">12</span> 条数据。错误数据 <span
+                                class="errorNum">12</span> 条，冲突数据<span class="conflictNum">12</span> 条</div>
+                        <div class="errorData">查看错误信息</div>
+                    </div>
+                </div>
+                <div class="importExcelTable" style="display: none;">
+                    <div class="tableBox">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="index">数据编号</th>
+                                    <th class="reason">错误原因</th>
+                                </tr>
+                            </thead>
+                            <tbody id="errorDataList">
+                                <tr>
+                                    <td>第9行</td>
+                                    <td>冲突删除，冲突数据编号：38297</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="popBottom">
+					<a href="javascript:void(0)" class="jb_btn jb_btn_92 fr fs14 add" data-lang="确定">确定</a>
+					<a href="javascript:void(0)" class="btnBlue btn_92_cancel fr fs14" data-lang="取消">取消</a>
+				</div> -->
+            <div class="het70 "></div>
+        </div>
+    </div>
+    <!-- ------------------------- 20240221 导入弹窗 end------------------------------------- -->
+
+    <!-- ---------------------------------切换校区弹窗--------------------start -->
+    <div class="maskDiv popChangeSchoolShowHide maskFadeOut" style="display: none;">
+        <div class="popDiv wid440 changeSchoolModal">
+            <div class="popHead">
+                <a href="javascript:void(0)" class="popChangeSchoolClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep" data-lang="切换校区">切换校区</p>
+            </div>
+            <div class="changeSchoolMain">
+                <span class="changeSchoolMain-title">校区</span>
+                <div class="changeSchoolMain-select">
+                    <div class="changeSchoolMain-select-out">
+                        <p class="changeSchoolMain-select-inner">请选择校区</p>
+                    </div>
+                    <ul class="changeSchoolMain-select-ul">
+                    </ul>
+                </div>
+            </div>
+            <div class="popBottom">
+                <a href="javascript:void(0)" class="jb_btn jb_btn_92 fr fs14 add" data-lang="sure">确定</a>
+                <a href="javascript:void(0)" class="btnBlue btn_92_cancel fr fs14" data-lang="cancel">取消</a>
+            </div>
+        </div>
+    </div>
+    <!-- ---------------------------------切换校区弹窗--------------------end -->
+    <!----------------- 20200813 设置弹窗 start ----------------->
+    <div class="maskDiv popSettingShowHide timeSet" style="display: none;">
+        <div class="popDiv wid640 settingModal">
+            <div class="popHead">
+                <a href="javascript:void(0)" class="popClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep " data-lang="设置">设置</p>
+            </div>
+            <div class="het60"></div>
+            <div class="settingMain">
+                <div class="list">
+                    <!--20201020-->
+                    <!-- <div class="listItem settingyear clearfix">
+                            <span class="itemLeft" data-lang="当前学期">当前学期</span>
+                            <div class="itemRight">
+                                <div class="select" style="width: 200px;">
+                                    <p><span class="curYear"></span><i class="arrow"></i></p>
+                                    <div class="settingSelectYear">
+                                        <ul class="halfyearList"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                    <!--20200901-->
+                    <div class="listItem maxsection clearfix">
+                        <span class="itemLeft" data-lang="总教学周数">总教学周数</span>
+                        <div class="itemRight">
+                            <div class="sectionNum">
+                                <span class="minus"></span>
+                                <input type="text" autocomplete="off" class="num" value="25" />
+                                <span class="plus"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="listItem settingweek clearfix">
+                        <span class="itemLeft" data-lang="当前教学周">当前教学周</span>
+                        <div class="itemRight">
+                            <div class="select">
+                                <p><span class="curWeek" data-lang="第1周">第1周</span><i class="arrow"></i></p>
+                                <!-- <div class="settingSelectWeek">
+										<ul class="selectList"></ul>
+									</div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="listItem settingweek clearfix">
+                        <span class="itemLeft" data-lang="本学期开始时间">本学期开始时间</span>
+                        <div class="itemRight">
+                            <div class="selecttime">
+                                <p id="startTime" class="termStartTimeSetting" data=''></p><i class="time"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="listItem maxsection">
+							<span class="itemLeft">每日最大节数</span>
+							<div class="itemRight">
+								<div class="sectionNum">
+									<span class="minus"></span>
+									<input type="text" autocomplete="off" class="num" value="12" />
+									<span class="plus"></span>
+								</div>
+							</div>
+						</div> -->
+                    <div class="listItem classLoc clearfix"><!----------20210918 新建课程 start---------->
+                        <span class="itemLeft" data-lang="设置节数对应时间">设置节数对应时间</span>
+                        <div class="itemRight">
+                            <span class="switch switch-off">
+                                <span class='slider'></span>
+                                <!--20200819 加悬浮提示 -->
+                                <span class="bntHoverTips" data-lang="关闭后将清空时间设置">关闭后将清空时间设置<i></i></span>
+                            </span>
+                            <!--20200901-->
+                            <p class="fastsetting" data-lang="快捷设置">快捷设置</p>
+                        </div>
+                    </div>
+                    <div class="sectionlist" id="sectionlist">
+                        <div class="text morningset" style="display: none;" data-lang="早晨">早晨</div>
+                        <div id="morningtimelist" class="morningset" style="display: none;"></div>
+                        <div class="text" data-lang="上午">上午</div>
+                        <div id="amtimelist"></div>
+                        <div class="text" data-lang="下午">下午</div>
+                        <div id="pmtimelist"></div>
+                        <div class="text" data-lang="晚上">晚上</div>
+                        <div id="nighttimelist"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="popBottom">
+                <a href="javascript:void(0)" class="jb_btn jb_btn_92 fr fs14 add" data-lang="确定">确定</a>
+                <a href="javascript:void(0)" class="btnBlue btn_92_cancel fr fs14" data-lang="取消">取消</a>
+            </div>
+            <div class="het70 "></div>
+        </div>
+    </div>
+    <!---------------- 设置 弹窗 end ------------------->
+    <!------------ 20200813 设置时间段 start ------------>
+    <div class="settingTimePop">
+        <div class="setTimeHead">
+            <p>开始时间</p>
+            <p>结束时间</p>
+        </div>
+        <div class="setTimeMain">
+            <div id="startHourList"></div>
+            <div id="startMiniList"></div>
+            <div id="endHourList"></div>
+            <div id="endMiniList"></div>
+        </div>
+        <div class="setTimeBottom">
+            <p class="cleartime">清空</p>
+            <p class="jb_btn jb_btn_44 disable">确定</p>
+        </div>
+    </div>
+    <!------------ 设置时间段 end ------------>
+    <!-------- 20200813 作业 start----------->
+    <!--<div class="maskDiv popClassTaskShowHide" style="display:none;">
+			<div class="popDiv wid640">
+				<div class="popHead">
+					<a href="javascript:void(0)" class="popClose fr"><img src="images/popClose.png" /></a>
+					<p class="fl fs18 colorDeep ">高等数学</p>
+				</div>
+				<div class="het60"></div>
+				<div class="ClassTaskMain">
+					<div class="ClassDetail_title">
+						<ul class="breadcrumb" style="display: none;">
+							<li class="active">全部作业</li>
+						</ul>
+						<ul class="breadcrumb">
+							<li><a href="#">全部作业</a></li>
+							<li><a href="#">第一章 光的直线距离地球是多少光年</a></li>
+							<li class="active">第一节 直线传播</li>
+						</ul>
+					</div>
+					<ul class="ClassDetail_list ClassTask_list">
+						<li class="clearfix">
+							<img class="classIcon" src="images/folder.png">
+							<div class="classInfo">
+								<h3>在线课堂</h3>
+							</div>
+						</li>
+						<li class="clearfix">
+							<img class="classIcon" src="images/folder.png">
+							<div class="classInfo">
+								<h3>腾讯会议</h3>
+							</div>
+						</li>
+						<li class="choseItem clearfix">
+							<div class="choseIcon"><i class="chose"></i></div>
+							<div class="classInfo">
+								<h3>第1节 函数的解析表示课后作业</h3>
+							</div>
+							<a href="javascript:void(0);" class="showDetail">查看详情</a>
+						</li>
+						<li class="choseItem clearfix">
+							<div class="choseIcon"><i class="chose"></i></div>
+							<div class="classInfo">
+								<h3>第2节 数列极限的描述性定义很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很很长很很长很很长很很长很很长很</h3>
+							</div>
+							<a href="javascript:void(0);" class="showDetail">查看详情</a>
+						</li>
+						<li class="choseItem clearfix">
+							<div class="choseIcon"><i class="chose"></i></div>
+							<div class="classInfo">
+								<h3>第1节 函数的解析表示课后作业</h3>
+							</div>
+							<a href="javascript:void(0);" class="showDetail">查看详情</a>
+						</li>
+						<li class="choseItem clearfix">
+							<div class="choseIcon"><i class="chose"></i></div>
+							<div class="classInfo">
+								<h3>第2节 数列极限的描述性定义很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很很长很很长很很长很很长很很长很</h3>
+							</div>
+							<a href="javascript:void(0);" class="showDetail">查看详情</a>
+						</li>
+						<li class="choseItem clearfix">
+							<div class="choseIcon"><i class="chose"></i></div>
+							<div class="classInfo">
+								<h3>第1节 函数的解析表示课后作业</h3>
+							</div>
+							<a href="javascript:void(0);" class="showDetail">查看详情</a>
+						</li>
+						<li class="choseItem clearfix">
+							<div class="choseIcon"><i class="chose"></i></div>
+							<div class="classInfo">
+								<h3>第2节 数列极限的描述性定义很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很长很很长很很长很很长很很长很很长很</h3>
+							</div>
+							<a href="javascript:void(0);" class="showDetail">查看详情</a>
+						</li>
+					</ul>
+				</div>
+				<div class="popBottom">
+					<a href="#" class="jb_btn jb_btn_92 fr fs14">删除</a>
+					<a href="javascript:void(0);" class="btnBlue btn_92_cancel fr fs14 popMoveDele">取消</a>
+				</div>
+				<div class="het72"></div>
+			</div>
+		</div>-->
+    <!--------作业 end----------->
+
+    <!--------20200817发签到弹窗  start----------->
+    <div class="maskDiv popSignInShowHide" style="display:none;">
+        <div class="popDiv wid640">
+            20200820 加签到头部
+            <div class="popHead">
+                <a href="javascript:void(0)" class="popClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep">签到</p>
+            </div>
+            <div class="het30"></div>
+            <div class="SignInMain">
+                <iframe class="insertSign" name="insertSign" src="" frameborder="0" width="100%" height="100%"
+                    scrolling="no"></iframe>
+            </div>
+        </div>
+    </div>
+    <!--------发签到弹窗 end----------->
+    <!-------- 20200826 从我的课程复制 start----------->
+    <div class="maskDiv popCopyCourseShowHide courseList" style="display:none;">
+        <div class="popDiv wid640">
+            <div class="popHead">
+                <a href="javascript:void(0)" class="popClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep"></p>
+            </div>
+            <div class="het60"></div>
+            <div class="copyCourseMain">
+                <div class="ClassDetail_title" style="display: none;">
+                    <ul class="breadcrumb">
+                        <li><a href="javascript:void(0);">我的课程</a></li>
+                        <li class="active"></li>
+                    </ul>
+                </div>
+                <div class="ClassDetail_list ClassDetail_teach">
+                    <ul>
+                    </ul>
+                </div>
+            </div>
+            <div class="popBottom">
+                <a href="javascript:void(0);" class="jb_btn jb_btn_92 fr fs14 sure">确定</a>
+                <a href="javascript:void(0);" class="btnBlue btn_92_cancel fr fs14 popMoveDele">取消</a>
+            </div>
+            <div class="het72"></div>
+        </div>
+    </div>
+    <!--------从我的课程复制 end----------->
+
+    <!--20200901 快捷设置弹窗-->
+    <div class="maskDiv popFastSettingShowHide timeSet" style="display: none;">
+        <div class="popDiv wid640 settingModal">
+            <div class="popHead">
+                <a href="javascript:void(0);" class="popClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep " data-lang="快捷设置">快捷设置</p>
+            </div>
+            <div class="het60"></div>
+            <div class="settingMain fastsettingMain">
+                <div class="morningDiv clearfix">
+                    <div class="fastSetLeft listItem">
+                        <span class="itemLeft" data-lang="早晨课节">早晨课节</span>
+                        <div class="sectionNum">
+                            <span class="minus"></span>
+                            <input type="text" autocomplete="off" class="num" value="2" />
+                            <span class="plus"></span>
+                        </div>
+                    </div>
+                    <div class="fastSetRight listItem">
+                        <span class="itemLeft" data-lang="早晨开始时间">早晨开始时间</span>
+                        <div class="selecttime">
+                            <p></p><i class="time"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="amDiv clearfix">
+                    <div class="fastSetLeft listItem">
+                        <span class="itemLeft" data-lang="上午课节">上午课节</span>
+                        <div class="sectionNum">
+                            <span class="minus"></span>
+                            <input type="text" autocomplete="off" class="num" value="4" />
+                            <span class="plus"></span>
+                        </div>
+                    </div>
+                    <div class="fastSetRight listItem">
+                        <span class="itemLeft" data-lang="上午开始时间">上午开始时间</span>
+                        <div class="selecttime">
+                            <p></p><i class="time"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="pmDiv clearfix">
+                    <div class="fastSetLeft listItem">
+                        <span class="itemLeft" data-lang="下午课节">下午课节</span>
+                        <div class="sectionNum">
+                            <span class="minus"></span>
+                            <input type="text" autocomplete="off" class="num" value="4" />
+                            <span class="plus"></span>
+                        </div>
+                    </div>
+                    <div class="fastSetRight listItem">
+                        <span class="itemLeft" data-lang="下午开始时间">下午开始时间</span>
+                        <div class="selecttime">
+                            <p></p><i class="time"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="nightDiv clearfix">
+                    <div class="fastSetLeft listItem">
+                        <span class="itemLeft" data-lang="晚上课节">晚上课节</span>
+                        <div class="sectionNum">
+                            <span class="minus"></span>
+                            <input type="text" autocomplete="off" class="num" value="4" />
+                            <span class="plus"></span>
+                        </div>
+                    </div>
+                    <div class="fastSetRight listItem">
+                        <span class="itemLeft" data-lang="晚上开始时间">晚上开始时间</span>
+                        <div class="selecttime">
+                            <p></p><i class="time"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="classsetting clearfix">
+                    <div class="fastSetLeft listItem">
+                        <span class="itemLeft" data-lang="课节时长">课节时长</span>
+                        <div class="select">
+                            <p><span class="classduration"></span><i class="arrow"></i></p>
+                            <div class="settingSelectduration">
+                                <ul class="selecthourList"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fastsetRight listItem">
+                        <span class="itemLeft" data-lang="课间时长">课间时长</span>
+                        <div class="select">
+                            <p><span class="classbreak"></span><i class="arrow"></i></p>
+                            <div class="settingSelectbreak">
+                                <ul class="selecthourList"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="popBottom">
+                <a href="javascript:void(0)" class="jb_btn jb_btn_92 fr fs14 add" data-lang="确定">确定</a>
+                <a href="javascript:void(0)" class="btnBlue btn_92_cancel fr fs14" data-lang="取消">取消</a>
+            </div>
+            <div class="het70 "></div>
+        </div>
+    </div>
+    <!---------------- 快捷设置 弹窗 end ------------------->
+    <!----------------- 20200901 选择课间时间 start ----------------->
+    <div class="selectTimeDuraPop">
+        <div class="timeList">
+            <ul>
+                <li>
+                    <p>20
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>25
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>30
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>35
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>40
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>45
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>50
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>55
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>60
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="selectTimebreakPop">
+        <div class="timeList">
+            <ul>
+                <li>
+                    <p>0
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>5
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>10
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>15
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>20
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>25
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+                <li>
+                    <p>30
+                    <p data-lang="分钟">分钟</p>
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!----------------- 选择课间时间  end ----------------->
+    <!----------------- 20200904 快捷设置-设置开始时间start ----------------->
+    <div class="selectStartTimePop selectPop">
+        <div class="startTimeMain">
+            <div id="startTimeHourList"></div>
+            <div id="startTimeMinusList"></div>
+        </div>
+        <div class="setStartTimeBottom">
+            <p class="cleartime">清空</p>
+            <p class="jb_btn jb_btn_44 disable">确定</p>
+        </div>
+    </div>
+    <!----------------- 20201020 设置-选择当前教学周start ----------------->
+    <div class="settingSelectWeekPop selectPop">
+        <div class="settingSelectWeek">
+            <ul class="selectList"></ul>
+        </div>
+    </div>
+    <!----------------- 添加课程-设置周 end ----------------->
+    <!--20201020 历史课表-->
+    <div class="maskDiv popHistoryShowHide" style="display: none;">
+        <div class="popDiv wid440">
+            <div class="popHead">
+                <a href="javascript:void(0)" class="popClose fr"><img src="images/popClose.png" /></a>
+                <p class="fl fs18 colorDeep">历史课表</p>
+            </div>
+            <div class="het60"></div>
+            <div class="historyModalMain">
+                <ul class="list">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- 查看冲突课程弹窗  -->
+    <div class="maskDiv popClashCourseModal" style="display: none;">
+        <div style="width: 1000px;overflow: hidden;">
+            <div class="clashCourseList">
+            </div>
+        </div>
+    </div>
+    <!-- 首页和详情页共用的html -->
+    <div class="commonHtml"></div>
+    <div class="toolTipBox" style="display: none;"></div>
+    <!--		<script type="text/javascript" src="../../pc/js/jquery.min.js?t=1" ></script>-->
+    <script type="text/javascript" src="../../pc/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="../../pc/js/jquery-migrate-3.4.1.min.js"></script>
+    <script type="text/javascript" src="../../js/common/jquery.i18n.properties.min.js"></script>
+    <!--		<script type="text/javascript" src="js/tools.js" ></script>-->
+    <script type="text/javascript" src="../../js/common/map.js?v=1"></script>
+    <script type="text/javascript" src="js/md5.js"></script>
+    <script type="text/javascript" src="../../app/curriculum/js/mirrorDomain.js?v=1"></script>
+    <script type="text/javascript" src="js/scheduleCommon.js?v=11"></script>
+    <script type="text/javascript" src="../../app/curriculum/js/i18n.util.js?v=1"></script>
+    <script type="text/javascript" src="js/schedule.pc.set.js?t=2"></script>
+    <script type="text/javascript" src="js/schedule.pc.import.js"></script>
+    <script type="text/javascript" src="js/schedule.pc.js?v=11"></script>
+    <script type="text/javascript" src="js/schedule.pc.detail.js?v=2"></script>
+    <script type="text/javascript" src="js/schedule.pc.edit.new.js?v=6"></script>
+    <script type="text/javascript" src="js/cropper.js?t=1"></script>
+    <script type="text/javascript" src="../../pc/js/iframeResizer.contentWindow.min.js"></script>
+    <script type="text/javascript" src="js/layui.js"></script><!--20200909-->
+    <script>
+        loadJSFile(getServerDomain('NoteDomainHttps') + '/res/js/common/yun.file.util.js');
+        //动态加载js
+        function loadJSFile(url) {
+            if (!url) {
+                return;
+            }
+            var script = document.createElement('script');
+            script.src = url;
+            script.type = 'text/javascript';
+            script.charset = 'utf-8';
+            document.head.appendChild(script);
+        }
+        $('.commonHtml').load('scheduleCommon.html');
+        /*if (!getUrlParameter('role')) {
+            // 首页，且地址上没有对应的身份，新增课使用旧版逻辑
+            loadJSFile(window.location.origin + mctx + '/res/pc/curriculum/js/schedule.pc.edit.js?v=6')
+        } else {
+            loadJSFile(window.location.origin + mctx + '/res/pc/curriculum/js/schedule.pc.edit.new.js?v=6')
+        }*/
+    </script>
+</body>
+
+</html>
