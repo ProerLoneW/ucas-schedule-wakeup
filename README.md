@@ -35,12 +35,12 @@ wakeup在更新后失去了对国科大sep系统的兼容，参考之前的教�
 加入国科大组织（或对应学校组织）：我—设置—账号管理—绑定单位—添加单位—中国科学院大学—输入学号—绑定+登录成功，然后就可以学习通扫码登录，完成身份认证。
 
 <div style="display: flex; flex-direction: row; gap: 10px; align-items: flex-start; overflow-x: auto;">
-  <img src="images/image7.png" style="height: 800px; width: auto;">
-  <img src="images/image8.png" style="height: 800px; width: auto;">
-  <img src="images/image9.png" style="height: 800px; width: auto;">
-  <img src="images/image10.png" style="height: 800px; width: auto;">
-  <img src="images/image11.jpg" style="height: 800px; width: auto;">
-  <img src="images/image12.jpg" style="height: 800px; width: auto;">
+  <img src="images/image7.png" style="height: 600px; width: auto;">
+  <img src="images/image8.png" style="height: 600px; width: auto;">
+  <img src="images/image9.png" style="height: 600px; width: auto;">
+  <img src="images/image10.png" style="height: 600px; width: auto;">
+  <img src="images/image11.jpg" style="height: 600px; width: auto;">
+  <img src="images/image12.jpg" style="height: 600px; width: auto;">
 </div>
 
 ### 将wakeup设置成UCAS的形状
