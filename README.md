@@ -16,13 +16,17 @@
 
 
 
+
+
 ## 为什么会有这个教程
 
 wakeup在更新后失去了对国科大sep系统的兼容，参考之前的教程直接在wakeup软件中从教务系统导入课表时，会出现课表无法区分具体上课周的问题，直接导入的话，会把你所有的课都放在同一周里，甚至会出现重叠的情况。（亲自试过的同学应该知道这里有多奇怪）。
 
-安卓手机可以通过安装旧版本apk来解决（见新生群），苹果手机手机由于没有低版本的wakeup，这个问题不太好解决。另外，还有其他同学写的模拟选课网站（礼貌引用，小红书上搜索“国科大选课”应该能轻松找到相关讲解）：https://courseplanner.cysdy.cn 也非常的实用，但听说似乎有数据不是最新版本的问题
+安卓手机可以通过安装旧版本apk来解决（见新生群），苹果手机手机由于没有低版本的wakeup，这个问题不太好解决。另外，还有其他同学写的模拟选课网站（礼貌引用，小红书上搜索“国科大选课”应该能轻松找到相关讲解）：https://courseplanner.cysdy.cn、以及一个叫UCAS-lessons的项目，也非常的实用，但听说似乎有数据不是最新版本的问题。
 
 所以本教程利用wakeup app可以excel/csv表格导入的功能，从课程网页上抓取得到课程的详细数据，然后整理得到指定格式的csv文件，这样就可以直接导入到wakeup软件中了。
+
+还有个比较关键的点是，把教程做成skill的形式，上手门槛将会得到进一步的降低，让你的agent自动化的帮你完成任务，免去很多麻烦的教程阅读和人机交互成本。
 
 
 
@@ -43,18 +47,11 @@ wakeup在更新后失去了对国科大sep系统的兼容，参考之前的教�
 
 ### 将wakeup设置成UCAS的形状
 
-在**课表数据**中修改开学日期，修改每天课程节数为13节、学期周数为20周（以2026-2027秋季学期为例）
+在**课表数据**中修改开学日期，修改每天课程节数为13节、学期周数为20周（以2026-2027秋季学期为例）。
 
-<div style="display: flex; flex-direction: column; gap: 4px;">   
-    <img src="" style="width:100%;object-fit:contain;" />   
-    <img src="" style="width:100%;object-fit:contain;" />   
-    <img src="" style="width:100%;object-fit:contain;" /> 
-    <img src="" style="width:100%;object-fit:contain;" /> 
-    <img src="" style="width:100%;object-fit:contain;" /> 
-    <img src="" style="width:100%;object-fit:contain;" /> 
-</div>
+在上课时间中，手动修改时间表，把每天13节课的时间修改好（因为早上是8点半上课，所以跟wakeup的默认上课时间无法对齐，需要手动调整）。
 
-在上课时间中，手动修改时间表，把每天13节课的时间修改好（因为早上是8点半上课，所以跟wakeup的默认上课时间无法对齐，需要手动调整）
+![image14](images/image14.jpg)
 
 
 
@@ -128,7 +125,7 @@ python3 -m playwright install chromium   # 仅浏览器登录方式需要
 
 - "帮我爬一下我国科大的课表，导成 WakeUp 能导入的格式"
 - "我的 kb.mooc.ucas.edu.cn 课表想导出 Excel"
-- （推荐）“参考仓库中的README文件，一步一步带我爬取课表，然后导出结果”
+- （推荐）“参考仓库中的README文件，使用ucas-schedule-export skill一步一步带我爬取课表，然后导出结果”
 
 也可以用斜杠命令强制触发：`/ucas-schedule-export 导出本学期课表`
 
